@@ -1,0 +1,8 @@
+Notes on the ISA.
+
+1. The most interesting part of the ISA is the Code Morphing Software (CMS). CMS takes in X86 compatible instructions and converts them into VLIW instructions compatible with ntive hardware.
+2. The advantages of this approach is that the VLIW engine can be modified anytime with just minor changes to the ISA.
+3. The processor will be compatible with the newer versions of the X86 instructions as long as the code morphing software is updated.
+4. The code morphing software supports different execution modes for the X86 compatible instructions such as interpretation, interpretation with code generation, and optimization.
+5. CMS uses instrumentation to predict which mode of execution to pick.
+6. Importantly, the X86 instructions are processed in order. However, the work of the instructions is done out-of-order.
