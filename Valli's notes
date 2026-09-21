@@ -6,3 +6,5 @@ Notes on the ISA.
 4. The code morphing software supports different execution modes for the X86 compatible instructions such as interpretation, interpretation with code generation, and optimization.
 5. CMS uses instrumentation to predict which mode of execution to pick.
 6. Importantly, the X86 instructions are processed in order. However, the work of the instructions is done out-of-order.
+7. The code morphing software performs register renaming while translating the code.
+8. 
