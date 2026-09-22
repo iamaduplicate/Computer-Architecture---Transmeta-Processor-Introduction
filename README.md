@@ -11,3 +11,6 @@ Another reference for benchmark: https://vanshardware.com/articles/2003/07/03071
 (Couldn't upload a PDF)
 
 http://www.ecs.umass.edu/ece/koren/architecture/VLIW/2/crusoe2.html
+
+AI acknowledgement:
+The authors acknowledge the use of AI in preparing the dossier and slides. AI assistance was used to identify and gather references, improve the phrasing of written content, and help understand the referenced articles. In some instances, AI was also used to develop explanations and simplify concepts for presentation in the slides.
