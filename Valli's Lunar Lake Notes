@@ -1,0 +1,4 @@
+Things to do:
+
+1. Provide novel features of the ISA and MCM, as well as the register file organization and renaming. Be sure to include an overview of any SIMD features 
+2. If the processor has other specialized units outside the cores, be sure to give an overview of this (1-2 slides is plenty)
