@@ -66,3 +66,7 @@ In chip design, an IP is a reusable functional block: a USB controller, a PCIe c
 Why a shared fabric lets you “move IPs between dies”
 Every block talks to the rest of the system through the fabric’s interface. If that interface is identical on both dies, a block doesn’t care which die it sits on. The designers can decide where each IP lives without redesigning how it connects.
 
+Matrix engines (the MAC arrays): hardwired units that do huge numbers of multiply-accumulates for the core math of a neural network, such as convolutions and matrix multiplies. Very fast and efficient, but fixed in function.
+SHAVE DSPs: flexible, programmable processors that handle everything else in the network that doesn’t map onto the matrix engines, such as activation functions, normalization, pooling, softmax, and data reshaping or type conversion.
+
+Without the SHAVEs, any layer the matrix engines can’t handle would have to go back to the CPU or GPU, which costs time and energy. Because they’re programmable, they also let the NPU support new kinds of layers through software updates, without changing the hardware.
