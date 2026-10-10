@@ -8,5 +8,59 @@ DRAM on package. The wires are short and the power is much lower. Upto 8.5 GT/s.
 Two tiles/chiplets - CPU tile and PCT tile.
 Tile is Intel’s term for what the industry generally calls a chiplet: a separate piece of silicon (die) that does one job, and several of which are assembled into one package. Instead of one big monolithic chip, the processor is built from smaller dies joined together with advanced packaging.
 CPU tile : Compute tile
+Puts together all the XPU's:
+    has 4 lion cove processors
+    has 4 skymont e core processors
+    NPU 4 architecture
+    Xe2 GPU architecture
+    Media and display engines
+    Image processing unit
+and together with that the memory components - the memory subsystem.
+Goals - need the best processor for these so that they can get most out of the transistors and also latency. If they reside together, we can ensure we have lower latency.
 PCT tile: Platform controller tile - deals with IO and platform functions
+
+They have a memory side cache. 
 Why split it up: you can use the expensive leading-edge process only for the part that benefits, mix and match dies from different fabs, and improve yield, since small dies have fewer defects than one huge die.
+
+PMIC- Pwer management IC: The e cores can be turned on or off. It has its own power rail.
+“Can be turned on or off” means the E-cores can be power gated: when they’re idle or not needed, the chip cuts their power supply entirely. A powered-off core uses almost no energy, not even leakage. Leakage is the current that transistors waste just by being powered, and in modern processes it’s a big part of total power, so shutting a core off is far better than just letting it sit idle.
+This turns off the cache associated with the e core as well. The P core can still work independently.
+“Its own power rail” means the E-cores are fed by a dedicated supply line at their own voltage, separate from the P-cores’ rail. This ties directly to the PMIC discussion. The PMIC outputs several rails, and one of them goes only to the E-cores. That gives you two things:
+Independent voltage: The E-cores can run at a different voltage from the P-cores. Voltage is the biggest lever on power, since dynamic power scales roughly with V² x frequency, so a core doing light work can run at a low voltage and sip power while the P-cores sit at a different level or are off.
+Independent on/off: With a shared rail, you can only gate cores with switches inside the chip. A separate rail lets the whole E-core group be shut down or ramped on its own.
+
+These are fixed railed. They have variable rails as well. Example - DRAM Rail.
+
+PMIC provides telemetry as well. The PMIC reporting back how much power each rail is delivering, so the processor knows its real consumption
+
+The GPU:
+Using the new Xe2 engine. It integrates XMX engines to provide better GPU capabilites. Media engine and display engine are part of the Xe2 architecture.It integrates HDMI 2.1 as well as DP 2.1. Has a low power eDP 1.5 channel. They have three display pipelines. Support H.266 VVC decoding.
+
+Xe2
+Intel’s second-generation Xe GPU architecture. In Lunar Lake it’s the integrated GPU, on the compute tile, sharing the package and memory with the CPU cores.
+XMX engines
+XMX (Xe Matrix eXtensions) are dedicated hardware units inside the GPU for matrix multiplication, the core operation of AI and neural-network workloads. They do many multiply-accumulates per cycle on low-precision numbers (INT8, FP16, BF16), much faster and at lower energy than the regular shader cores. This is Intel’s counterpart to Nvidia’s tensor cores. “Better GPU capabilities” really means faster AI work on the GPU, such as upscaling or running ML models. This is also the same idea as the PIM discussion at the start: matrix math is the workload that drives everyone’s interest in bandwidth and efficiency.
+Media engine
+A fixed-function block that encodes and decodes video (H.264, H.265, AV1, and so on). It’s separate from the shader cores because dedicated hardware does it with much less power. That’s why video playback barely taxes your battery.
+Display engine
+The block that takes finished frames from memory and sends them to screens: scanning out pixels, scaling, color handling, and driving the output ports. It’s separate from the rendering part of the GPU.
+HDMI 2.1, DP 2.1, eDP 1.5
+These are the display connection standards the display engine supports:
+HDMI 2.1: the TV and monitor standard, with enough bandwidth for high resolutions and refresh rates (for example 4K at 120 Hz).
+DP 2.1 (DisplayPort): the same idea for monitors and docks, with even higher bandwidth for high-resolution, high-refresh displays.
+eDP 1.5 (embedded DisplayPort): the version for the laptop’s built-in screen, connected internally rather than through a cable. “Low power” here means it has features that save power, such as lowering the refresh rate or not resending the image when the screen content hasn’t changed. That matters for battery life, which is Lunar Lake’s main goal.
+Three display pipelines
+A pipeline is an independent path that generates the image stream for one display. Three pipelines means it can drive up to three displays at the same time, each with its own resolution and timing (for example, the laptop panel plus two external monitors).
+H.266 VVC decoding
+H.266 is VVC (Versatile Video Coding), the successor to H.265 (HEVC). It compresses video much better, with roughly half the bitrate for the same quality, as I recall. “Decoding support” means the media engine can play VVC video in hardware, efficiently, rather than burning CPU power on it. Note it says decoding only, not encoding. VVC is not widely used yet, so this is a forward-looking feature.
+
+
+6 NPU's and 12 SHAVE DSPS. 9 MB cache.
+
+Platform control tile can be split into two major areas: Security and Connectivity. Three seperate security engine specializing in different tasks. From conncectivity perspective they have integrated Wifi 7. They have the ability to move IP's  between dies. They call this extended scalability. 
+
+“Same fabric” means the compute tile and the PCT don’t each have their own incompatible network. They share one common interconnect and protocol that spans both dies. A block on the PCT talks to a block on the compute tile the same way it would talk to a neighbor on its own die.
+IP (intellectual property block)
+In chip design, an IP is a reusable functional block: a USB controller, a PCIe controller, a memory controller, a media engine, an NPU. Each is designed once and dropped into different chips.
+Why a shared fabric lets you “move IPs between dies”
+Every block talks to the rest of the system through the fabric’s interface. If that interface is identical on both dies, a block doesn’t care which die it sits on. The designers can decide where each IP lives without redesigning how it connects.
