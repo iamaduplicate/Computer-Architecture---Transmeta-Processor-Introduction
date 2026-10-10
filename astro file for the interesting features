@@ -1,0 +1,237 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout id="specialized-units" title="Specialized Units">
+
+  <section>
+    <h2>Overview</h2>
+    <p>
+      Lunar Lake is built from two <strong>tiles</strong>. "Tile" is Intel's term for what the
+      industry generally calls a chiplet: a separate piece of silicon (a die) that does one job,
+      with several assembled into one package using advanced packaging. Instead of one big
+      monolithic chip, the processor is made of smaller dies. The two tiles are the
+      <strong>compute tile</strong> and the <strong>platform controller tile (PCT)</strong>, and
+      the DRAM sits on the same package next to them.
+    </p>
+  </section>
+
+  <section>
+    <h2>Memory on package</h2>
+    <p>
+      The DRAM is placed on the package, right next to the tiles. The wires between the processor
+      and the memory are therefore short, and interface power is much lower than with memory on
+      the motherboard. The memory runs at up to 8.5 GT/s. The compute tile also contains the
+      memory subsystem and a <strong>memory-side cache</strong>.
+    </p>
+  </section>
+
+  <section>
+    <h2>The two tiles</h2>
+
+    <h3>Compute tile</h3>
+    <p>
+      The compute tile puts all of the processing units ("XPUs") together:
+    </p>
+    <ul>
+      <li>4 Lion Cove P-cores</li>
+      <li>4 Skymont E-cores</li>
+      <li>NPU 4 architecture</li>
+      <li>Xe2 GPU architecture</li>
+      <li>Media and display engines</li>
+      <li>Image processing unit</li>
+      <li>The memory subsystem, including the memory-side cache</li>
+    </ul>
+    <p>
+      The goal is to give these blocks the best process technology, so Intel gets the most out of
+      the transistors, and to keep them close together. When they reside on the same die, latency
+      between them stays low.
+    </p>
+
+    <h3>Platform controller tile (PCT)</h3>
+    <p>
+      The PCT handles I/O and platform functions. It divides into two major areas:
+    </p>
+    <ul>
+      <li>
+        <strong>Security:</strong> three separate security engines, each specializing in different
+        tasks.
+      </li>
+      <li>
+        <strong>Connectivity:</strong> integrated Wi-Fi 7, bluetooth 5.4 and Thunderbolt 4
+    
+      </li>
+    </ul>
+
+    <h3>Why split the chip into tiles</h3>
+    <ul>
+      <li>
+        The expensive leading-edge process is used only for the part that benefits from it.
+        The PCT does not need cutting-edge transistors.
+      </li>
+      <li>Dies can be mixed and matched from different fabs.</li>
+      <li>
+        Yield improves, since small dies have fewer defects than one huge die.
+      </li>
+    </ul>
+    <!-- verify: process node used for each tile -->
+  </section>
+
+  <section>
+    <h2>Shared fabric and "extended scalability"</h2>
+    <p>
+      Both tiles are wired into the same on-chip network (the <strong>fabric</strong>), so a block
+      connects to the system the same way on either die. That lets Intel decide which die each
+      IP block goes on when designing a product, without redesigning how the block connects.
+      Intel calls this <strong>extended scalability</strong>.
+    </p>
+    <p>
+      An <strong>IP block</strong> is a reusable functional block, such as a USB controller, a PCIe
+      controller, a memory controller, a media engine, or an NPU. Each is designed once and dropped
+      into different chips. Because the fabric interface is identical on both tiles, a block does
+      not care which die it sits on.
+    </p>
+    <p>
+      This is a design-time choice when the chip is partitioned into tiles. Blocks do not move
+      while the chip is running. Crossing between tiles still costs slightly more latency and
+      energy than staying on one die, which is probably the reason the latency-sensitive blocks are kept
+      together on the compute tile.
+    </p>
+  </section>
+
+  <section>
+    <h2>GPU: Xe2</h2>
+    <p>
+      The integrated GPU uses Intel's second-generation Xe architecture, Xe2. It sits on the
+      compute tile and shares the package and memory with the CPU cores. The media engine and
+      display engine are part of the Xe2 architecture.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Block</th>
+          <th scope="col">What it does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">XMX engines</th>
+          <td>
+            Xe Matrix eXtensions: dedicated hardware units for matrix multiplication, the core
+            operation of AI and neural-network workloads. They perform many multiply-accumulates
+            per cycle on low-precision numbers (INT8, FP16, BF16), much faster and at lower energy
+            than the regular shader cores. This is Intel's counterpart to Nvidia's tensor cores,
+            and it speeds up AI work on the GPU such as upscaling or running ML models.
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Media engine</th>
+          <td>
+            A fixed-function block that encodes and decodes video (H.264, H.265, AV1, and so on).
+            It is separate from the shader cores because dedicated hardware uses much less power,
+            which is why video playback barely consumes the battery. It supports hardware
+            <strong>H.266 (VVC)</strong> decoding. VVC is the successor to H.265 and compresses
+            video considerably better. 
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Display engine</th>
+          <td>
+            Takes finished frames from memory and sends them to screens: scanning out pixels,
+            scaling, color handling, and driving the output ports. It is separate from the
+            rendering part of the GPU. It has <strong>three display pipelines</strong>, each an
+            independent path generating the image stream for one display, so it can drive up to
+            three displays at once with their own resolutions and timing.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <section>
+    <h2>NPU 4</h2>
+    <p>
+      NPU 4 is the dedicated AI block on the compute tile. It has <strong>6 NPUs</strong>,
+      <strong>12 SHAVE DSPs</strong>, and <strong>9 MB of cache</strong>.
+      Its two kinds of hardware split the work of running a neural network:
+    </p>
+    <ul>
+      <li>
+        <strong>Matrix engines (MAC arrays):</strong> hardwired units that do huge numbers of
+        multiply-accumulates for the core math of a network, such as convolutions and matrix
+        multiplies. Very fast and efficient, but fixed in function.
+      </li>
+      <li>
+        <strong>SHAVE DSPs:</strong> flexible, programmable vector processors that handle
+        everything else that does not map onto the matrix engines, such as activation functions,
+        normalization, pooling, softmax, and data reshaping or type conversion.
+      </li>
+    </ul>
+    <p>
+      Without the SHAVEs, any layer the matrix engines cannot handle would have to go back to the
+      CPU or GPU, which costs time and energy. Because the SHAVEs are programmable, they also let
+      the NPU support new kinds of layers through software updates, without changing the hardware.
+    </p>
+  </section>
+
+  <section>
+    <h2>Power management (PMIC)</h2>
+    <p>
+      The power management IC (PMIC) supplies the processor's power rails, each a dedicated supply
+      line at its own voltage. Two features stand out.
+    </p>
+    <ul>
+      <li>
+        <strong>E-cores can be turned off.</strong> The E-cores can be power gated: when they are
+        idle or not needed, their supply is cut entirely. A powered-off core uses almost no
+        energy, not even leakage (the current transistors waste just by being powered, which is a
+        big part of total power in modern processes). Gating a core is far better than letting it
+        sit idle. The cache associated with the E-cores is turned off as well, while the P-cores
+        keep working independently.
+      </li>
+      <li>
+        <strong>E-cores have their own power rail.</strong> The PMIC outputs several rails, and one
+        goes only to the E-cores. That gives them an independent voltage. It also gives
+        independent on/off control: with a shared rail, cores can only be gated by switches inside
+        the chip, while a separate rail lets the whole E-core group be shut down or ramped on its
+        own.
+      </li>
+    </ul>
+    <p>
+      The E-core rail is a <strong>fixed rail</strong>. The PMIC also provides
+      <strong>variable rails</strong>; the DRAM rail is one example.
+    </p>
+    <p>
+      The PMIC also provides <strong>telemetry</strong>: it reports back how much power each rail
+      is delivering, so the processor knows its real consumption.
+    </p>
+  </section>
+
+</Layout>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid currentColor;
+    border-bottom-color: color-mix(in srgb, currentColor 20%, transparent);
+  }
+  thead th {
+    border-bottom-width: 2px;
+  }
+  tbody th {
+    white-space: nowrap;
+  }
+  section {
+    margin-bottom: 2rem;
+  }
+</style>
