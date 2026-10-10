@@ -1,3 +1,4 @@
+
 Things to do:
 
 1. Provide novel features of the ISA and MCM, as well as the register file organization and renaming. Be sure to include an overview of any SIMD features 
@@ -64,3 +65,4 @@ IP (intellectual property block)
 In chip design, an IP is a reusable functional block: a USB controller, a PCIe controller, a memory controller, a media engine, an NPU. Each is designed once and dropped into different chips.
 Why a shared fabric lets you “move IPs between dies”
 Every block talks to the rest of the system through the fabric’s interface. If that interface is identical on both dies, a block doesn’t care which die it sits on. The designers can decide where each IP lives without redesigning how it connects.
+
