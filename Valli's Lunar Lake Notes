@@ -2,3 +2,11 @@ Things to do:
 
 1. Provide novel features of the ISA and MCM, as well as the register file organization and renaming. Be sure to include an overview of any SIMD features 
 2. If the processor has other specialized units outside the cores, be sure to give an overview of this (1-2 slides is plenty)
+
+
+DRAM on package. The wires are short and the power is much lower. Upto 8.5 GT/s. 
+Two tiles/chiplets - CPU tile and PCT tile.
+Tile is Intel’s term for what the industry generally calls a chiplet: a separate piece of silicon (die) that does one job, and several of which are assembled into one package. Instead of one big monolithic chip, the processor is built from smaller dies joined together with advanced packaging.
+CPU tile : Compute tile
+PCT tile: Platform controller tile - deals with IO and platform functions
+Why split it up: you can use the expensive leading-edge process only for the part that benefits, mix and match dies from different fabs, and improve yield, since small dies have fewer defects than one huge die.
