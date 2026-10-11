@@ -1,1 +1,4 @@
 Lion Cove finally splits the unified math scheduler into separate ones for integer and floating point/vector ops. Intel also split register renaming for floating point and integer operations. That’s not visible from software, but it does suggest Intel’s core is now laid out a lot like AMD’s Zen. Both do register renaming separately for integer and vector operations, and use separate schedulers for those operations.
+
+Intel uses one SIMD 16 structure.
+Skymont has: 4x128 bit FP and SIMD vector.
